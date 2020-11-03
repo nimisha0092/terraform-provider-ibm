@@ -18,10 +18,12 @@
 package dnssvcsv1
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 
 	common "github.com/IBM/dns-svcs-go-sdk/common"
-	"github.com/IBM/go-sdk-core/v3/core"
+	"github.com/IBM/go-sdk-core/v4/core"
 )
 
 // ListLoadBalancers : List load balancers
@@ -63,16 +65,16 @@ func (dnsSvcs *DnsSvcsV1) ListLoadBalancers(listLoadBalancersOptions *ListLoadBa
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalListLoadBalancers(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalListLoadBalancers)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -144,16 +146,16 @@ func (dnsSvcs *DnsSvcsV1) CreateLoadBalancer(createLoadBalancerOptions *CreateLo
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalLoadBalancer(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalLoadBalancer)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -240,16 +242,16 @@ func (dnsSvcs *DnsSvcsV1) GetLoadBalancer(getLoadBalancerOptions *GetLoadBalance
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalLoadBalancer(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalLoadBalancer)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -321,16 +323,16 @@ func (dnsSvcs *DnsSvcsV1) UpdateLoadBalancer(updateLoadBalancerOptions *UpdateLo
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalLoadBalancer(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalLoadBalancer)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -374,16 +376,16 @@ func (dnsSvcs *DnsSvcsV1) ListPools(listPoolsOptions *ListPoolsOptions) (result 
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalListPools(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalListPools)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -433,8 +435,8 @@ func (dnsSvcs *DnsSvcsV1) CreatePool(createPoolOptions *CreatePoolOptions) (resu
 	if createPoolOptions.Enabled != nil {
 		body["enabled"] = createPoolOptions.Enabled
 	}
-	if createPoolOptions.MinimumOrigins != nil {
-		body["minimum_origins"] = createPoolOptions.MinimumOrigins
+	if createPoolOptions.HealthyOriginsThreshold != nil {
+		body["healthy_origins_threshold"] = createPoolOptions.HealthyOriginsThreshold
 	}
 	if createPoolOptions.Origins != nil {
 		body["origins"] = createPoolOptions.Origins
@@ -442,11 +444,14 @@ func (dnsSvcs *DnsSvcsV1) CreatePool(createPoolOptions *CreatePoolOptions) (resu
 	if createPoolOptions.Monitor != nil {
 		body["monitor"] = createPoolOptions.Monitor
 	}
-	if createPoolOptions.NotificationType != nil {
-		body["notification_type"] = createPoolOptions.NotificationType
-	}
 	if createPoolOptions.NotificationChannel != nil {
 		body["notification_channel"] = createPoolOptions.NotificationChannel
+	}
+	if createPoolOptions.HealthcheckRegion != nil {
+		body["healthcheck_region"] = createPoolOptions.HealthcheckRegion
+	}
+	if createPoolOptions.HealthcheckSubnets != nil {
+		body["healthcheck_subnets"] = createPoolOptions.HealthcheckSubnets
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -458,16 +463,16 @@ func (dnsSvcs *DnsSvcsV1) CreatePool(createPoolOptions *CreatePoolOptions) (resu
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalPool(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalPool)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -554,16 +559,16 @@ func (dnsSvcs *DnsSvcsV1) GetPool(getPoolOptions *GetPoolOptions) (result *Pool,
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalPool(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalPool)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -613,8 +618,8 @@ func (dnsSvcs *DnsSvcsV1) UpdatePool(updatePoolOptions *UpdatePoolOptions) (resu
 	if updatePoolOptions.Enabled != nil {
 		body["enabled"] = updatePoolOptions.Enabled
 	}
-	if updatePoolOptions.MinimumOrigins != nil {
-		body["minimum_origins"] = updatePoolOptions.MinimumOrigins
+	if updatePoolOptions.HealthyOriginsThreshold != nil {
+		body["healthy_origins_threshold"] = updatePoolOptions.HealthyOriginsThreshold
 	}
 	if updatePoolOptions.Origins != nil {
 		body["origins"] = updatePoolOptions.Origins
@@ -622,11 +627,14 @@ func (dnsSvcs *DnsSvcsV1) UpdatePool(updatePoolOptions *UpdatePoolOptions) (resu
 	if updatePoolOptions.Monitor != nil {
 		body["monitor"] = updatePoolOptions.Monitor
 	}
-	if updatePoolOptions.NotificationType != nil {
-		body["notification_type"] = updatePoolOptions.NotificationType
-	}
 	if updatePoolOptions.NotificationChannel != nil {
 		body["notification_channel"] = updatePoolOptions.NotificationChannel
+	}
+	if updatePoolOptions.HealthcheckRegion != nil {
+		body["healthcheck_region"] = updatePoolOptions.HealthcheckRegion
+	}
+	if updatePoolOptions.HealthcheckSubnets != nil {
+		body["healthcheck_subnets"] = updatePoolOptions.HealthcheckSubnets
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -638,16 +646,16 @@ func (dnsSvcs *DnsSvcsV1) UpdatePool(updatePoolOptions *UpdatePoolOptions) (resu
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalPool(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalPool)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -691,16 +699,16 @@ func (dnsSvcs *DnsSvcsV1) ListMonitors(listMonitorsOptions *ListMonitorsOptions)
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalListMonitors(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalListMonitors)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -741,6 +749,9 @@ func (dnsSvcs *DnsSvcsV1) CreateMonitor(createMonitorOptions *CreateMonitorOptio
 	}
 
 	body := make(map[string]interface{})
+	if createMonitorOptions.Name != nil {
+		body["name"] = createMonitorOptions.Name
+	}
 	if createMonitorOptions.Description != nil {
 		body["description"] = createMonitorOptions.Description
 	}
@@ -765,8 +776,8 @@ func (dnsSvcs *DnsSvcsV1) CreateMonitor(createMonitorOptions *CreateMonitorOptio
 	if createMonitorOptions.Path != nil {
 		body["path"] = createMonitorOptions.Path
 	}
-	if createMonitorOptions.Header != nil {
-		body["header"] = createMonitorOptions.Header
+	if createMonitorOptions.HeadersVar != nil {
+		body["headers"] = createMonitorOptions.HeadersVar
 	}
 	if createMonitorOptions.AllowInsecure != nil {
 		body["allow_insecure"] = createMonitorOptions.AllowInsecure
@@ -776,9 +787,6 @@ func (dnsSvcs *DnsSvcsV1) CreateMonitor(createMonitorOptions *CreateMonitorOptio
 	}
 	if createMonitorOptions.ExpectedBody != nil {
 		body["expected_body"] = createMonitorOptions.ExpectedBody
-	}
-	if createMonitorOptions.FollowRedirects != nil {
-		body["follow_redirects"] = createMonitorOptions.FollowRedirects
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -790,16 +798,16 @@ func (dnsSvcs *DnsSvcsV1) CreateMonitor(createMonitorOptions *CreateMonitorOptio
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalMonitor(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalMonitor)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -886,16 +894,16 @@ func (dnsSvcs *DnsSvcsV1) GetMonitor(getMonitorOptions *GetMonitorOptions) (resu
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalMonitor(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalMonitor)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -936,6 +944,9 @@ func (dnsSvcs *DnsSvcsV1) UpdateMonitor(updateMonitorOptions *UpdateMonitorOptio
 	}
 
 	body := make(map[string]interface{})
+	if updateMonitorOptions.Name != nil {
+		body["name"] = updateMonitorOptions.Name
+	}
 	if updateMonitorOptions.Description != nil {
 		body["description"] = updateMonitorOptions.Description
 	}
@@ -960,8 +971,8 @@ func (dnsSvcs *DnsSvcsV1) UpdateMonitor(updateMonitorOptions *UpdateMonitorOptio
 	if updateMonitorOptions.Path != nil {
 		body["path"] = updateMonitorOptions.Path
 	}
-	if updateMonitorOptions.Header != nil {
-		body["header"] = updateMonitorOptions.Header
+	if updateMonitorOptions.HeadersVar != nil {
+		body["headers"] = updateMonitorOptions.HeadersVar
 	}
 	if updateMonitorOptions.AllowInsecure != nil {
 		body["allow_insecure"] = updateMonitorOptions.AllowInsecure
@@ -971,9 +982,6 @@ func (dnsSvcs *DnsSvcsV1) UpdateMonitor(updateMonitorOptions *UpdateMonitorOptio
 	}
 	if updateMonitorOptions.ExpectedBody != nil {
 		body["expected_body"] = updateMonitorOptions.ExpectedBody
-	}
-	if updateMonitorOptions.FollowRedirects != nil {
-		body["follow_redirects"] = updateMonitorOptions.FollowRedirects
 	}
 	_, err = builder.SetBodyContentJSON(body)
 	if err != nil {
@@ -985,16 +993,16 @@ func (dnsSvcs *DnsSvcsV1) UpdateMonitor(updateMonitorOptions *UpdateMonitorOptio
 		return
 	}
 
-	response, err = dnsSvcs.Service.Request(request, make(map[string]interface{}))
-	if err == nil {
-		m, ok := response.Result.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("an error occurred while processing the operation response")
-			return
-		}
-		result, err = UnmarshalMonitor(m)
-		response.Result = result
+	var rawResponse map[string]json.RawMessage
+	response, err = dnsSvcs.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalMonitor)
+	if err != nil {
+		return
+	}
+	response.Result = result
 
 	return
 }
@@ -1027,7 +1035,7 @@ type CreateLoadBalancerOptions struct {
 	DefaultPools []string `json:"default_pools,omitempty"`
 
 	// Map availability zones to pool ID's.
-	AzPools *AzPools `json:"az_pools,omitempty"`
+	AzPools []LoadBalancerAzPoolsItem `json:"az_pools,omitempty"`
 
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
@@ -1093,7 +1101,7 @@ func (options *CreateLoadBalancerOptions) SetDefaultPools(defaultPools []string)
 }
 
 // SetAzPools : Allow user to set AzPools
-func (options *CreateLoadBalancerOptions) SetAzPools(azPools *AzPools) *CreateLoadBalancerOptions {
+func (options *CreateLoadBalancerOptions) SetAzPools(azPools []LoadBalancerAzPoolsItem) *CreateLoadBalancerOptions {
 	options.AzPools = azPools
 	return options
 }
@@ -1114,6 +1122,9 @@ func (options *CreateLoadBalancerOptions) SetHeaders(param map[string]string) *C
 type CreateMonitorOptions struct {
 	// The unique identifier of a service instance.
 	InstanceID *string `json:"instance_id" validate:"required"`
+
+	// The name of the load balancer monitor.
+	Name *string `json:"name,omitempty"`
 
 	// Descriptive text of the load balancer monitor.
 	Description *string `json:"description,omitempty"`
@@ -1144,10 +1155,9 @@ type CreateMonitorOptions struct {
 
 	// The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The
 	// User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
-	Header interface{} `json:"header,omitempty"`
+	HeadersVar []HealthcheckHeader `json:"headers,omitempty"`
 
-	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS
-	// monitors.
+	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTPS monitors.
 	AllowInsecure *bool `json:"allow_insecure,omitempty"`
 
 	// The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS
@@ -1158,15 +1168,20 @@ type CreateMonitorOptions struct {
 	// marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.
 	ExpectedBody *string `json:"expected_body,omitempty"`
 
-	// Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.
-	FollowRedirects *bool `json:"follow_redirects,omitempty"`
-
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
+
+// Constants associated with the CreateMonitorOptions.Type property.
+// The protocol to use for the health check. Currently supported protocols are 'HTTP','HTTPS' and 'TCP'.
+const (
+	CreateMonitorOptions_Type_Http  = "HTTP"
+	CreateMonitorOptions_Type_Https = "HTTPS"
+	CreateMonitorOptions_Type_Tcp   = "TCP"
+)
 
 // Constants associated with the CreateMonitorOptions.Method property.
 // The method to use for the health check applicable to HTTP/HTTPS based checks, the default value is 'GET'.
@@ -1185,6 +1200,12 @@ func (*DnsSvcsV1) NewCreateMonitorOptions(instanceID string) *CreateMonitorOptio
 // SetInstanceID : Allow user to set InstanceID
 func (options *CreateMonitorOptions) SetInstanceID(instanceID string) *CreateMonitorOptions {
 	options.InstanceID = core.StringPtr(instanceID)
+	return options
+}
+
+// SetName : Allow user to set Name
+func (options *CreateMonitorOptions) SetName(name string) *CreateMonitorOptions {
+	options.Name = core.StringPtr(name)
 	return options
 }
 
@@ -1236,9 +1257,9 @@ func (options *CreateMonitorOptions) SetPath(path string) *CreateMonitorOptions 
 	return options
 }
 
-// SetHeader : Allow user to set Header
-func (options *CreateMonitorOptions) SetHeader(header interface{}) *CreateMonitorOptions {
-	options.Header = header
+// SetHeadersVar : Allow user to set HeadersVar
+func (options *CreateMonitorOptions) SetHeadersVar(headersVar []HealthcheckHeader) *CreateMonitorOptions {
+	options.HeadersVar = headersVar
 	return options
 }
 
@@ -1257,12 +1278,6 @@ func (options *CreateMonitorOptions) SetExpectedCodes(expectedCodes string) *Cre
 // SetExpectedBody : Allow user to set ExpectedBody
 func (options *CreateMonitorOptions) SetExpectedBody(expectedBody string) *CreateMonitorOptions {
 	options.ExpectedBody = core.StringPtr(expectedBody)
-	return options
-}
-
-// SetFollowRedirects : Allow user to set FollowRedirects
-func (options *CreateMonitorOptions) SetFollowRedirects(followRedirects bool) *CreateMonitorOptions {
-	options.FollowRedirects = core.BoolPtr(followRedirects)
 	return options
 }
 
@@ -1294,20 +1309,23 @@ type CreatePoolOptions struct {
 
 	// The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins
 	// falls below this number, the pool will be marked unhealthy and we will failover to the next available pool.
-	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
+	HealthyOriginsThreshold *int64 `json:"healthy_origins_threshold,omitempty"`
 
 	// The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy
 	// origins, provided the pool itself is healthy.
-	Origins []Origin `json:"origins,omitempty"`
+	Origins []OriginInput `json:"origins,omitempty"`
 
 	// The ID of the load balancer monitor to be associated to this pool.
 	Monitor *string `json:"monitor,omitempty"`
 
-	// The type of the notification channel.
-	NotificationType *string `json:"notification_type,omitempty"`
-
 	// The notification channel.
 	NotificationChannel *string `json:"notification_channel,omitempty"`
+
+	// Health check region of VSIs.
+	HealthcheckRegion *string `json:"healthcheck_region,omitempty"`
+
+	// Health check subnet IDs of VSIs.
+	HealthcheckSubnets []string `json:"healthcheck_subnets,omitempty"`
 
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
@@ -1316,11 +1334,15 @@ type CreatePoolOptions struct {
 	Headers map[string]string
 }
 
-// Constants associated with the CreatePoolOptions.NotificationType property.
-// The type of the notification channel.
+// Constants associated with the CreatePoolOptions.HealthcheckRegion property.
+// Health check region of VSIs.
 const (
-	CreatePoolOptions_NotificationType_Email   = "email"
-	CreatePoolOptions_NotificationType_Webhook = "webhook"
+	CreatePoolOptions_HealthcheckRegion_AuSyd   = "au-syd"
+	CreatePoolOptions_HealthcheckRegion_EuDu    = "eu-du"
+	CreatePoolOptions_HealthcheckRegion_EuGb    = "eu-gb"
+	CreatePoolOptions_HealthcheckRegion_JpTok   = "jp-tok"
+	CreatePoolOptions_HealthcheckRegion_UsEast  = "us-east"
+	CreatePoolOptions_HealthcheckRegion_UsSouth = "us-south"
 )
 
 // NewCreatePoolOptions : Instantiate CreatePoolOptions
@@ -1354,14 +1376,14 @@ func (options *CreatePoolOptions) SetEnabled(enabled bool) *CreatePoolOptions {
 	return options
 }
 
-// SetMinimumOrigins : Allow user to set MinimumOrigins
-func (options *CreatePoolOptions) SetMinimumOrigins(minimumOrigins int64) *CreatePoolOptions {
-	options.MinimumOrigins = core.Int64Ptr(minimumOrigins)
+// SetHealthyOriginsThreshold : Allow user to set HealthyOriginsThreshold
+func (options *CreatePoolOptions) SetHealthyOriginsThreshold(healthyOriginsThreshold int64) *CreatePoolOptions {
+	options.HealthyOriginsThreshold = core.Int64Ptr(healthyOriginsThreshold)
 	return options
 }
 
 // SetOrigins : Allow user to set Origins
-func (options *CreatePoolOptions) SetOrigins(origins []Origin) *CreatePoolOptions {
+func (options *CreatePoolOptions) SetOrigins(origins []OriginInput) *CreatePoolOptions {
 	options.Origins = origins
 	return options
 }
@@ -1372,15 +1394,21 @@ func (options *CreatePoolOptions) SetMonitor(monitor string) *CreatePoolOptions 
 	return options
 }
 
-// SetNotificationType : Allow user to set NotificationType
-func (options *CreatePoolOptions) SetNotificationType(notificationType string) *CreatePoolOptions {
-	options.NotificationType = core.StringPtr(notificationType)
-	return options
-}
-
 // SetNotificationChannel : Allow user to set NotificationChannel
 func (options *CreatePoolOptions) SetNotificationChannel(notificationChannel string) *CreatePoolOptions {
 	options.NotificationChannel = core.StringPtr(notificationChannel)
+	return options
+}
+
+// SetHealthcheckRegion : Allow user to set HealthcheckRegion
+func (options *CreatePoolOptions) SetHealthcheckRegion(healthcheckRegion string) *CreatePoolOptions {
+	options.HealthcheckRegion = core.StringPtr(healthcheckRegion)
+	return options
+}
+
+// SetHealthcheckSubnets : Allow user to set HealthcheckSubnets
+func (options *CreatePoolOptions) SetHealthcheckSubnets(healthcheckSubnets []string) *CreatePoolOptions {
+	options.HealthcheckSubnets = healthcheckSubnets
 	return options
 }
 
@@ -1819,6 +1847,30 @@ func (options *ListPoolsOptions) SetHeaders(param map[string]string) *ListPoolsO
 	return options
 }
 
+// LoadBalancerAzPoolsItem : LoadBalancerAzPoolsItem struct
+type LoadBalancerAzPoolsItem struct {
+	// Availability zone.
+	AvailabilityZone *string `json:"availability_zone,omitempty"`
+
+	// List of load balancer pools.
+	Pools []string `json:"pools,omitempty"`
+}
+
+// UnmarshalLoadBalancerAzPoolsItem unmarshals an instance of LoadBalancerAzPoolsItem from the specified map of raw messages.
+func UnmarshalLoadBalancerAzPoolsItem(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(LoadBalancerAzPoolsItem)
+	err = core.UnmarshalPrimitive(m, "availability_zone", &obj.AvailabilityZone)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "pools", &obj.Pools)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // UpdateLoadBalancerOptions : The UpdateLoadBalancer options.
 type UpdateLoadBalancerOptions struct {
 	// The unique identifier of a service instance.
@@ -1850,7 +1902,7 @@ type UpdateLoadBalancerOptions struct {
 	DefaultPools []string `json:"default_pools,omitempty"`
 
 	// Map availability zones to pool ID's.
-	AzPools *AzPools `json:"az_pools,omitempty"`
+	AzPools []LoadBalancerAzPoolsItem `json:"az_pools,omitempty"`
 
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
@@ -1923,7 +1975,7 @@ func (options *UpdateLoadBalancerOptions) SetDefaultPools(defaultPools []string)
 }
 
 // SetAzPools : Allow user to set AzPools
-func (options *UpdateLoadBalancerOptions) SetAzPools(azPools *AzPools) *UpdateLoadBalancerOptions {
+func (options *UpdateLoadBalancerOptions) SetAzPools(azPools []LoadBalancerAzPoolsItem) *UpdateLoadBalancerOptions {
 	options.AzPools = azPools
 	return options
 }
@@ -1947,6 +1999,9 @@ type UpdateMonitorOptions struct {
 
 	// The unique identifier of a load balancer monitor.
 	MonitorID *string `json:"monitor_id" validate:"required"`
+
+	// The name of the load balancer monitor.
+	Name *string `json:"name,omitempty"`
 
 	// Descriptive text of the load balancer monitor.
 	Description *string `json:"description,omitempty"`
@@ -1977,7 +2032,7 @@ type UpdateMonitorOptions struct {
 
 	// The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The
 	// User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
-	Header interface{} `json:"header,omitempty"`
+	HeadersVar []HealthcheckHeader `json:"headers,omitempty"`
 
 	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS
 	// monitors.
@@ -1991,15 +2046,20 @@ type UpdateMonitorOptions struct {
 	// marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.
 	ExpectedBody *string `json:"expected_body,omitempty"`
 
-	// Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.
-	FollowRedirects *bool `json:"follow_redirects,omitempty"`
-
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
+
+// Constants associated with the UpdateMonitorOptions.Type property.
+// The protocol to use for the health check. Currently supported protocols are 'HTTP','HTTPS' and 'TCP'.
+const (
+	UpdateMonitorOptions_Type_Http  = "HTTP"
+	UpdateMonitorOptions_Type_Https = "HTTPS"
+	UpdateMonitorOptions_Type_Tcp   = "TCP"
+)
 
 // Constants associated with the UpdateMonitorOptions.Method property.
 // The method to use for the health check applicable to HTTP/HTTPS based checks, the default value is 'GET'.
@@ -2025,6 +2085,12 @@ func (options *UpdateMonitorOptions) SetInstanceID(instanceID string) *UpdateMon
 // SetMonitorID : Allow user to set MonitorID
 func (options *UpdateMonitorOptions) SetMonitorID(monitorID string) *UpdateMonitorOptions {
 	options.MonitorID = core.StringPtr(monitorID)
+	return options
+}
+
+// SetName : Allow user to set Name
+func (options *UpdateMonitorOptions) SetName(name string) *UpdateMonitorOptions {
+	options.Name = core.StringPtr(name)
 	return options
 }
 
@@ -2076,9 +2142,9 @@ func (options *UpdateMonitorOptions) SetPath(path string) *UpdateMonitorOptions 
 	return options
 }
 
-// SetHeader : Allow user to set Header
-func (options *UpdateMonitorOptions) SetHeader(header interface{}) *UpdateMonitorOptions {
-	options.Header = header
+// SetHeadersVar : Allow user to set HeadersVar
+func (options *UpdateMonitorOptions) SetHeadersVar(headersVar []HealthcheckHeader) *UpdateMonitorOptions {
+	options.HeadersVar = headersVar
 	return options
 }
 
@@ -2097,12 +2163,6 @@ func (options *UpdateMonitorOptions) SetExpectedCodes(expectedCodes string) *Upd
 // SetExpectedBody : Allow user to set ExpectedBody
 func (options *UpdateMonitorOptions) SetExpectedBody(expectedBody string) *UpdateMonitorOptions {
 	options.ExpectedBody = core.StringPtr(expectedBody)
-	return options
-}
-
-// SetFollowRedirects : Allow user to set FollowRedirects
-func (options *UpdateMonitorOptions) SetFollowRedirects(followRedirects bool) *UpdateMonitorOptions {
-	options.FollowRedirects = core.BoolPtr(followRedirects)
 	return options
 }
 
@@ -2137,20 +2197,23 @@ type UpdatePoolOptions struct {
 
 	// The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins
 	// falls below this number, the pool will be marked unhealthy and we will failover to the next available pool.
-	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
+	HealthyOriginsThreshold *int64 `json:"healthy_origins_threshold,omitempty"`
 
 	// The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy
 	// origins, provided the pool itself is healthy.
-	Origins []Origin `json:"origins,omitempty"`
+	Origins []OriginInput `json:"origins,omitempty"`
 
 	// The ID of the load balancer monitor to be associated to this pool.
 	Monitor *string `json:"monitor,omitempty"`
 
-	// The type of the notification channel.
-	NotificationType *string `json:"notification_type,omitempty"`
-
 	// The notification channel.
 	NotificationChannel *string `json:"notification_channel,omitempty"`
+
+	// Health check region of VSIs.
+	HealthcheckRegion *string `json:"healthcheck_region,omitempty"`
+
+	// Health check subnet IDs of VSIs.
+	HealthcheckSubnets []string `json:"healthcheck_subnets,omitempty"`
 
 	// Uniquely identifying a request.
 	XCorrelationID *string `json:"X-Correlation-ID,omitempty"`
@@ -2159,11 +2222,15 @@ type UpdatePoolOptions struct {
 	Headers map[string]string
 }
 
-// Constants associated with the UpdatePoolOptions.NotificationType property.
-// The type of the notification channel.
+// Constants associated with the UpdatePoolOptions.HealthcheckRegion property.
+// Health check region of VSIs.
 const (
-	UpdatePoolOptions_NotificationType_Email   = "email"
-	UpdatePoolOptions_NotificationType_Webhook = "webhook"
+	UpdatePoolOptions_HealthcheckRegion_AuSyd   = "au-syd"
+	UpdatePoolOptions_HealthcheckRegion_EuDu    = "eu-du"
+	UpdatePoolOptions_HealthcheckRegion_EuGb    = "eu-gb"
+	UpdatePoolOptions_HealthcheckRegion_JpTok   = "jp-tok"
+	UpdatePoolOptions_HealthcheckRegion_UsEast  = "us-east"
+	UpdatePoolOptions_HealthcheckRegion_UsSouth = "us-south"
 )
 
 // NewUpdatePoolOptions : Instantiate UpdatePoolOptions
@@ -2204,14 +2271,14 @@ func (options *UpdatePoolOptions) SetEnabled(enabled bool) *UpdatePoolOptions {
 	return options
 }
 
-// SetMinimumOrigins : Allow user to set MinimumOrigins
-func (options *UpdatePoolOptions) SetMinimumOrigins(minimumOrigins int64) *UpdatePoolOptions {
-	options.MinimumOrigins = core.Int64Ptr(minimumOrigins)
+// SetHealthyOriginsThreshold : Allow user to set HealthyOriginsThreshold
+func (options *UpdatePoolOptions) SetHealthyOriginsThreshold(healthyOriginsThreshold int64) *UpdatePoolOptions {
+	options.HealthyOriginsThreshold = core.Int64Ptr(healthyOriginsThreshold)
 	return options
 }
 
 // SetOrigins : Allow user to set Origins
-func (options *UpdatePoolOptions) SetOrigins(origins []Origin) *UpdatePoolOptions {
+func (options *UpdatePoolOptions) SetOrigins(origins []OriginInput) *UpdatePoolOptions {
 	options.Origins = origins
 	return options
 }
@@ -2222,15 +2289,21 @@ func (options *UpdatePoolOptions) SetMonitor(monitor string) *UpdatePoolOptions 
 	return options
 }
 
-// SetNotificationType : Allow user to set NotificationType
-func (options *UpdatePoolOptions) SetNotificationType(notificationType string) *UpdatePoolOptions {
-	options.NotificationType = core.StringPtr(notificationType)
-	return options
-}
-
 // SetNotificationChannel : Allow user to set NotificationChannel
 func (options *UpdatePoolOptions) SetNotificationChannel(notificationChannel string) *UpdatePoolOptions {
 	options.NotificationChannel = core.StringPtr(notificationChannel)
+	return options
+}
+
+// SetHealthcheckRegion : Allow user to set HealthcheckRegion
+func (options *UpdatePoolOptions) SetHealthcheckRegion(healthcheckRegion string) *UpdatePoolOptions {
+	options.HealthcheckRegion = core.StringPtr(healthcheckRegion)
+	return options
+}
+
+// SetHealthcheckSubnets : Allow user to set HealthcheckSubnets
+func (options *UpdatePoolOptions) SetHealthcheckSubnets(healthcheckSubnets []string) *UpdatePoolOptions {
+	options.HealthcheckSubnets = healthcheckSubnets
 	return options
 }
 
@@ -2246,154 +2319,37 @@ func (options *UpdatePoolOptions) SetHeaders(param map[string]string) *UpdatePoo
 	return options
 }
 
-// AzPools : Map availability zones to pool ID's.
-type AzPools struct {
-	// us-south-1.
-	UsSouth1 []string `json:"us-south-1,omitempty"`
+// HealthcheckHeader : The HTTP header of health check request.
+type HealthcheckHeader struct {
+	// The name of HTTP request header.
+	Name *string `json:"name" validate:"required"`
 
-	// us-south-2.
-	UsSouth2 []string `json:"us-south-2,omitempty"`
-
-	// us-south-3.
-	UsSouth3 []string `json:"us-south-3,omitempty"`
-
-	// us-east-1.
-	UsEast1 []string `json:"us-east-1,omitempty"`
-
-	// us-east-2.
-	UsEast2 []string `json:"us-east-2,omitempty"`
-
-	// us-east-3.
-	UsEast3 []string `json:"us-east-3,omitempty"`
-
-	// eu-gb-1.
-	EuGb1 []string `json:"eu-gb-1,omitempty"`
-
-	// eu-gb-2.
-	EuGb2 []string `json:"eu-gb-2,omitempty"`
-
-	// eu-gb-3.
-	EuGb3 []string `json:"eu-gb-3,omitempty"`
-
-	// eu-de-1.
-	EuDe1 []string `json:"eu-de-1,omitempty"`
-
-	// eu-de-2.
-	EuDe2 []string `json:"eu-de-2,omitempty"`
-
-	// eu-de-3.
-	EuDe3 []string `json:"eu-de-3,omitempty"`
-
-	// au-syd-1.
-	AuSyd1 []string `json:"au-syd-1,omitempty"`
-
-	// au-syd-2.
-	AuSyd2 []string `json:"au-syd-2,omitempty"`
-
-	// au-syd-3.
-	AuSyd3 []string `json:"au-syd-3,omitempty"`
-
-	// jp-tok-1.
-	JpTok1 []string `json:"jp-tok-1,omitempty"`
-
-	// jp-tok-2.
-	JpTok2 []string `json:"jp-tok-2,omitempty"`
-
-	// jp-tok-3.
-	JpTok3 []string `json:"jp-tok-3,omitempty"`
+	// The value of HTTP request header.
+	Value []string `json:"value" validate:"required"`
 }
 
-// UnmarshalAzPools constructs an instance of AzPools from the specified map.
-func UnmarshalAzPools(m map[string]interface{}) (result *AzPools, err error) {
-	obj := new(AzPools)
-	obj.UsSouth1, err = core.UnmarshalStringSlice(m, "us-south-1")
-	if err != nil {
-		return
+// NewHealthcheckHeader : Instantiate HealthcheckHeader (Generic Model Constructor)
+func (*DnsSvcsV1) NewHealthcheckHeader(name string, value []string) (model *HealthcheckHeader, err error) {
+	model = &HealthcheckHeader{
+		Name:  core.StringPtr(name),
+		Value: value,
 	}
-	obj.UsSouth2, err = core.UnmarshalStringSlice(m, "us-south-2")
-	if err != nil {
-		return
-	}
-	obj.UsSouth3, err = core.UnmarshalStringSlice(m, "us-south-3")
-	if err != nil {
-		return
-	}
-	obj.UsEast1, err = core.UnmarshalStringSlice(m, "us-east-1")
-	if err != nil {
-		return
-	}
-	obj.UsEast2, err = core.UnmarshalStringSlice(m, "us-east-2")
-	if err != nil {
-		return
-	}
-	obj.UsEast3, err = core.UnmarshalStringSlice(m, "us-east-3")
-	if err != nil {
-		return
-	}
-	obj.EuGb1, err = core.UnmarshalStringSlice(m, "eu-gb-1")
-	if err != nil {
-		return
-	}
-	obj.EuGb2, err = core.UnmarshalStringSlice(m, "eu-gb-2")
-	if err != nil {
-		return
-	}
-	obj.EuGb3, err = core.UnmarshalStringSlice(m, "eu-gb-3")
-	if err != nil {
-		return
-	}
-	obj.EuDe1, err = core.UnmarshalStringSlice(m, "eu-de-1")
-	if err != nil {
-		return
-	}
-	obj.EuDe2, err = core.UnmarshalStringSlice(m, "eu-de-2")
-	if err != nil {
-		return
-	}
-	obj.EuDe3, err = core.UnmarshalStringSlice(m, "eu-de-3")
-	if err != nil {
-		return
-	}
-	obj.AuSyd1, err = core.UnmarshalStringSlice(m, "au-syd-1")
-	if err != nil {
-		return
-	}
-	obj.AuSyd2, err = core.UnmarshalStringSlice(m, "au-syd-2")
-	if err != nil {
-		return
-	}
-	obj.AuSyd3, err = core.UnmarshalStringSlice(m, "au-syd-3")
-	if err != nil {
-		return
-	}
-	obj.JpTok1, err = core.UnmarshalStringSlice(m, "jp-tok-1")
-	if err != nil {
-		return
-	}
-	obj.JpTok2, err = core.UnmarshalStringSlice(m, "jp-tok-2")
-	if err != nil {
-		return
-	}
-	obj.JpTok3, err = core.UnmarshalStringSlice(m, "jp-tok-3")
-	if err != nil {
-		return
-	}
-	result = obj
+	err = core.ValidateStruct(model, "required parameters")
 	return
 }
 
-// UnmarshalAzPoolsAsProperty unmarshals an instance of AzPools that is stored as a property
-// within the specified map.
-func UnmarshalAzPoolsAsProperty(m map[string]interface{}, propertyName string) (result *AzPools, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a map containing an instance of 'AzPools'", propertyName)
-			return
-		}
-		result, err = UnmarshalAzPools(objMap)
+// UnmarshalHealthcheckHeader unmarshals an instance of HealthcheckHeader from the specified map of raw messages.
+func UnmarshalHealthcheckHeader(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(HealthcheckHeader)
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalPrimitive(m, "value", &obj.Value)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2421,38 +2377,38 @@ type ListLoadBalancers struct {
 	Next *NextHref `json:"next" validate:"required"`
 }
 
-// UnmarshalListLoadBalancers constructs an instance of ListLoadBalancers from the specified map.
-func UnmarshalListLoadBalancers(m map[string]interface{}) (result *ListLoadBalancers, err error) {
+// UnmarshalListLoadBalancers unmarshals an instance of ListLoadBalancers from the specified map of raw messages.
+func UnmarshalListLoadBalancers(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ListLoadBalancers)
-	obj.LoadBalancers, err = UnmarshalLoadBalancerSliceAsProperty(m, "load_balancers")
+	err = core.UnmarshalModel(m, "load_balancers", &obj.LoadBalancers, UnmarshalLoadBalancer)
 	if err != nil {
 		return
 	}
-	obj.Offset, err = core.UnmarshalInt64(m, "offset")
+	err = core.UnmarshalPrimitive(m, "offset", &obj.Offset)
 	if err != nil {
 		return
 	}
-	obj.Limit, err = core.UnmarshalInt64(m, "limit")
+	err = core.UnmarshalPrimitive(m, "limit", &obj.Limit)
 	if err != nil {
 		return
 	}
-	obj.Count, err = core.UnmarshalInt64(m, "count")
+	err = core.UnmarshalPrimitive(m, "count", &obj.Count)
 	if err != nil {
 		return
 	}
-	obj.TotalCount, err = core.UnmarshalInt64(m, "total_count")
+	err = core.UnmarshalPrimitive(m, "total_count", &obj.TotalCount)
 	if err != nil {
 		return
 	}
-	obj.First, err = UnmarshalFirstHrefAsProperty(m, "first")
+	err = core.UnmarshalModel(m, "first", &obj.First, UnmarshalFirstHref)
 	if err != nil {
 		return
 	}
-	obj.Next, err = UnmarshalNextHrefAsProperty(m, "next")
+	err = core.UnmarshalModel(m, "next", &obj.Next, UnmarshalNextHref)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2480,38 +2436,38 @@ type ListMonitors struct {
 	Next *NextHref `json:"next" validate:"required"`
 }
 
-// UnmarshalListMonitors constructs an instance of ListMonitors from the specified map.
-func UnmarshalListMonitors(m map[string]interface{}) (result *ListMonitors, err error) {
+// UnmarshalListMonitors unmarshals an instance of ListMonitors from the specified map of raw messages.
+func UnmarshalListMonitors(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ListMonitors)
-	obj.Monitors, err = UnmarshalMonitorSliceAsProperty(m, "monitors")
+	err = core.UnmarshalModel(m, "monitors", &obj.Monitors, UnmarshalMonitor)
 	if err != nil {
 		return
 	}
-	obj.Offset, err = core.UnmarshalInt64(m, "offset")
+	err = core.UnmarshalPrimitive(m, "offset", &obj.Offset)
 	if err != nil {
 		return
 	}
-	obj.Limit, err = core.UnmarshalInt64(m, "limit")
+	err = core.UnmarshalPrimitive(m, "limit", &obj.Limit)
 	if err != nil {
 		return
 	}
-	obj.Count, err = core.UnmarshalInt64(m, "count")
+	err = core.UnmarshalPrimitive(m, "count", &obj.Count)
 	if err != nil {
 		return
 	}
-	obj.TotalCount, err = core.UnmarshalInt64(m, "total_count")
+	err = core.UnmarshalPrimitive(m, "total_count", &obj.TotalCount)
 	if err != nil {
 		return
 	}
-	obj.First, err = UnmarshalFirstHrefAsProperty(m, "first")
+	err = core.UnmarshalModel(m, "first", &obj.First, UnmarshalFirstHref)
 	if err != nil {
 		return
 	}
-	obj.Next, err = UnmarshalNextHrefAsProperty(m, "next")
+	err = core.UnmarshalModel(m, "next", &obj.Next, UnmarshalNextHref)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2539,38 +2495,38 @@ type ListPools struct {
 	Next *NextHref `json:"next" validate:"required"`
 }
 
-// UnmarshalListPools constructs an instance of ListPools from the specified map.
-func UnmarshalListPools(m map[string]interface{}) (result *ListPools, err error) {
+// UnmarshalListPools unmarshals an instance of ListPools from the specified map of raw messages.
+func UnmarshalListPools(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ListPools)
-	obj.Pools, err = UnmarshalPoolSliceAsProperty(m, "pools")
+	err = core.UnmarshalModel(m, "pools", &obj.Pools, UnmarshalPool)
 	if err != nil {
 		return
 	}
-	obj.Offset, err = core.UnmarshalInt64(m, "offset")
+	err = core.UnmarshalPrimitive(m, "offset", &obj.Offset)
 	if err != nil {
 		return
 	}
-	obj.Limit, err = core.UnmarshalInt64(m, "limit")
+	err = core.UnmarshalPrimitive(m, "limit", &obj.Limit)
 	if err != nil {
 		return
 	}
-	obj.Count, err = core.UnmarshalInt64(m, "count")
+	err = core.UnmarshalPrimitive(m, "count", &obj.Count)
 	if err != nil {
 		return
 	}
-	obj.TotalCount, err = core.UnmarshalInt64(m, "total_count")
+	err = core.UnmarshalPrimitive(m, "total_count", &obj.TotalCount)
 	if err != nil {
 		return
 	}
-	obj.First, err = UnmarshalFirstHrefAsProperty(m, "first")
+	err = core.UnmarshalModel(m, "first", &obj.First, UnmarshalFirstHref)
 	if err != nil {
 		return
 	}
-	obj.Next, err = UnmarshalNextHrefAsProperty(m, "next")
+	err = core.UnmarshalModel(m, "next", &obj.Next, UnmarshalNextHref)
 	if err != nil {
 		return
 	}
-	result = obj
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2579,14 +2535,11 @@ type LoadBalancer struct {
 	// Identifier of the load balancer.
 	ID *string `json:"id,omitempty"`
 
-	// the time when a load balancer is created.
-	CreatedOn *string `json:"created_on,omitempty"`
-
-	// the recent time when a load balancer is modified.
-	ModifiedOn *string `json:"modified_on,omitempty"`
-
 	// Name of the load balancer.
 	Name *string `json:"name,omitempty"`
+
+	// Descriptive text of the load balancer.
+	Description *string `json:"description,omitempty"`
 
 	// Whether the load balancer is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
@@ -2595,7 +2548,7 @@ type LoadBalancer struct {
 	TTL *int64 `json:"ttl,omitempty"`
 
 	// Healthy state of the load balancer.
-	Health *bool `json:"health,omitempty"`
+	Health *string `json:"health,omitempty"`
 
 	// The pool ID to use when all other pools are detected as unhealthy.
 	FallbackPool *string `json:"fallback_pool,omitempty"`
@@ -2605,86 +2558,71 @@ type LoadBalancer struct {
 	DefaultPools []string `json:"default_pools,omitempty"`
 
 	// Map availability zones to pool ID's.
-	AzPools *AzPools `json:"az_pools,omitempty"`
+	AzPools []LoadBalancerAzPoolsItem `json:"az_pools,omitempty"`
+
+	// the time when a load balancer is created.
+	CreatedOn *string `json:"created_on,omitempty"`
+
+	// the recent time when a load balancer is modified.
+	ModifiedOn *string `json:"modified_on,omitempty"`
 }
 
-// UnmarshalLoadBalancer constructs an instance of LoadBalancer from the specified map.
-func UnmarshalLoadBalancer(m map[string]interface{}) (result *LoadBalancer, err error) {
+// Constants associated with the LoadBalancer.Health property.
+// Healthy state of the load balancer.
+const (
+	LoadBalancer_Health_Critical = "CRITICAL"
+	LoadBalancer_Health_Degraded = "DEGRADED"
+	LoadBalancer_Health_Healthy  = "HEALTHY"
+)
+
+// UnmarshalLoadBalancer unmarshals an instance of LoadBalancer from the specified map of raw messages.
+func UnmarshalLoadBalancer(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(LoadBalancer)
-	obj.ID, err = core.UnmarshalString(m, "id")
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
 	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
 	if err != nil {
 		return
 	}
-	obj.Name, err = core.UnmarshalString(m, "name")
+	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
 	if err != nil {
 		return
 	}
-	obj.Enabled, err = core.UnmarshalBool(m, "enabled")
+	err = core.UnmarshalPrimitive(m, "ttl", &obj.TTL)
 	if err != nil {
 		return
 	}
-	obj.TTL, err = core.UnmarshalInt64(m, "ttl")
+	err = core.UnmarshalPrimitive(m, "health", &obj.Health)
 	if err != nil {
 		return
 	}
-	obj.Health, err = core.UnmarshalBool(m, "health")
+	err = core.UnmarshalPrimitive(m, "fallback_pool", &obj.FallbackPool)
 	if err != nil {
 		return
 	}
-	obj.FallbackPool, err = core.UnmarshalString(m, "fallback_pool")
+	err = core.UnmarshalPrimitive(m, "default_pools", &obj.DefaultPools)
 	if err != nil {
 		return
 	}
-	obj.DefaultPools, err = core.UnmarshalStringSlice(m, "default_pools")
+	err = core.UnmarshalModel(m, "az_pools", &obj.AzPools, UnmarshalLoadBalancerAzPoolsItem)
 	if err != nil {
 		return
 	}
-	obj.AzPools, err = UnmarshalAzPoolsAsProperty(m, "az_pools")
+	err = core.UnmarshalPrimitive(m, "created_on", &obj.CreatedOn)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// UnmarshalLoadBalancerSlice unmarshals a slice of LoadBalancer instances from the specified list of maps.
-func UnmarshalLoadBalancerSlice(s []interface{}) (slice []LoadBalancer, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'LoadBalancer'")
-			return
-		}
-		obj, e := UnmarshalLoadBalancer(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
+	err = core.UnmarshalPrimitive(m, "modified_on", &obj.ModifiedOn)
+	if err != nil {
+		return
 	}
-	return
-}
-
-// UnmarshalLoadBalancerSliceAsProperty unmarshals a slice of LoadBalancer instances that are stored as a property
-// within the specified map.
-func UnmarshalLoadBalancerSliceAsProperty(m map[string]interface{}, propertyName string) (slice []LoadBalancer, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'LoadBalancer'", propertyName)
-			return
-		}
-		slice, err = UnmarshalLoadBalancerSlice(vSlice)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2693,11 +2631,8 @@ type Monitor struct {
 	// Identifier of the load balancer monitor.
 	ID *string `json:"id,omitempty"`
 
-	// the time when a load balancer monitor is created.
-	CreatedOn *string `json:"created_on,omitempty"`
-
-	// the recent time when a load balancer monitor is modified.
-	ModifiedOn *string `json:"modified_on,omitempty"`
+	// The name of the load balancer monitor.
+	Name *string `json:"name,omitempty"`
 
 	// Descriptive text of the load balancer monitor.
 	Description *string `json:"description,omitempty"`
@@ -2728,10 +2663,9 @@ type Monitor struct {
 
 	// The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The
 	// User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
-	Header interface{} `json:"header,omitempty"`
+	HeadersVar []HealthcheckHeader `json:"headers,omitempty"`
 
-	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS
-	// monitors.
+	// Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTPS monitors.
 	AllowInsecure *bool `json:"allow_insecure,omitempty"`
 
 	// The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS
@@ -2742,8 +2676,11 @@ type Monitor struct {
 	// marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.
 	ExpectedBody *string `json:"expected_body,omitempty"`
 
-	// Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.
-	FollowRedirects *bool `json:"follow_redirects,omitempty"`
+	// the time when a load balancer monitor is created.
+	CreatedOn *string `json:"created_on,omitempty"`
+
+	// the recent time when a load balancer monitor is modified.
+	ModifiedOn *string `json:"modified_on,omitempty"`
 }
 
 // Constants associated with the Monitor.Method property.
@@ -2753,107 +2690,74 @@ const (
 	Monitor_Method_Head = "HEAD"
 )
 
-// UnmarshalMonitor constructs an instance of Monitor from the specified map.
-func UnmarshalMonitor(m map[string]interface{}) (result *Monitor, err error) {
+// UnmarshalMonitor unmarshals an instance of Monitor from the specified map of raw messages.
+func UnmarshalMonitor(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Monitor)
-	obj.ID, err = core.UnmarshalString(m, "id")
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
 	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
 	if err != nil {
 		return
 	}
-	obj.Description, err = core.UnmarshalString(m, "description")
+	err = core.UnmarshalPrimitive(m, "type", &obj.Type)
 	if err != nil {
 		return
 	}
-	obj.Type, err = core.UnmarshalString(m, "type")
+	err = core.UnmarshalPrimitive(m, "port", &obj.Port)
 	if err != nil {
 		return
 	}
-	obj.Port, err = core.UnmarshalInt64(m, "port")
+	err = core.UnmarshalPrimitive(m, "interval", &obj.Interval)
 	if err != nil {
 		return
 	}
-	obj.Interval, err = core.UnmarshalInt64(m, "interval")
+	err = core.UnmarshalPrimitive(m, "retries", &obj.Retries)
 	if err != nil {
 		return
 	}
-	obj.Retries, err = core.UnmarshalInt64(m, "retries")
+	err = core.UnmarshalPrimitive(m, "timeout", &obj.Timeout)
 	if err != nil {
 		return
 	}
-	obj.Timeout, err = core.UnmarshalInt64(m, "timeout")
+	err = core.UnmarshalPrimitive(m, "method", &obj.Method)
 	if err != nil {
 		return
 	}
-	obj.Method, err = core.UnmarshalString(m, "method")
+	err = core.UnmarshalPrimitive(m, "path", &obj.Path)
 	if err != nil {
 		return
 	}
-	obj.Path, err = core.UnmarshalString(m, "path")
+	err = core.UnmarshalModel(m, "headers", &obj.HeadersVar, UnmarshalHealthcheckHeader)
 	if err != nil {
 		return
 	}
-	obj.Header, err = core.UnmarshalAny(m, "header")
+	err = core.UnmarshalPrimitive(m, "allow_insecure", &obj.AllowInsecure)
 	if err != nil {
 		return
 	}
-	obj.AllowInsecure, err = core.UnmarshalBool(m, "allow_insecure")
+	err = core.UnmarshalPrimitive(m, "expected_codes", &obj.ExpectedCodes)
 	if err != nil {
 		return
 	}
-	obj.ExpectedCodes, err = core.UnmarshalString(m, "expected_codes")
+	err = core.UnmarshalPrimitive(m, "expected_body", &obj.ExpectedBody)
 	if err != nil {
 		return
 	}
-	obj.ExpectedBody, err = core.UnmarshalString(m, "expected_body")
+	err = core.UnmarshalPrimitive(m, "created_on", &obj.CreatedOn)
 	if err != nil {
 		return
 	}
-	obj.FollowRedirects, err = core.UnmarshalBool(m, "follow_redirects")
+	err = core.UnmarshalPrimitive(m, "modified_on", &obj.ModifiedOn)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// UnmarshalMonitorSlice unmarshals a slice of Monitor instances from the specified list of maps.
-func UnmarshalMonitorSlice(s []interface{}) (slice []Monitor, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'Monitor'")
-			return
-		}
-		obj, e := UnmarshalMonitor(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
-}
-
-// UnmarshalMonitorSliceAsProperty unmarshals a slice of Monitor instances that are stored as a property
-// within the specified map.
-func UnmarshalMonitorSliceAsProperty(m map[string]interface{}, propertyName string) (slice []Monitor, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'Monitor'", propertyName)
-			return
-		}
-		slice, err = UnmarshalMonitorSlice(vSlice)
-	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2871,67 +2775,79 @@ type Origin struct {
 	// Whether the origin server is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
 
-	// Weight for traffic distribution.
-	Weight *int64 `json:"weight,omitempty"`
+	// The health state of the origin server.
+	Health *bool `json:"health,omitempty"`
+
+	// The failure reason of the origin server if it is unhealthy.
+	HealthFailureReason *string `json:"health_failure_reason,omitempty"`
 }
 
-// UnmarshalOrigin constructs an instance of Origin from the specified map.
-func UnmarshalOrigin(m map[string]interface{}) (result *Origin, err error) {
+// UnmarshalOrigin unmarshals an instance of Origin from the specified map of raw messages.
+func UnmarshalOrigin(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Origin)
-	obj.Name, err = core.UnmarshalString(m, "name")
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
 	}
-	obj.Description, err = core.UnmarshalString(m, "description")
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
 	if err != nil {
 		return
 	}
-	obj.Address, err = core.UnmarshalString(m, "address")
+	err = core.UnmarshalPrimitive(m, "address", &obj.Address)
 	if err != nil {
 		return
 	}
-	obj.Enabled, err = core.UnmarshalBool(m, "enabled")
+	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
 	if err != nil {
 		return
 	}
-	obj.Weight, err = core.UnmarshalInt64(m, "weight")
+	err = core.UnmarshalPrimitive(m, "health", &obj.Health)
 	if err != nil {
 		return
 	}
-	result = obj
+	err = core.UnmarshalPrimitive(m, "health_failure_reason", &obj.HealthFailureReason)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
-// UnmarshalOriginSlice unmarshals a slice of Origin instances from the specified list of maps.
-func UnmarshalOriginSlice(s []interface{}) (slice []Origin, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'Origin'")
-			return
-		}
-		obj, e := UnmarshalOrigin(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
-	}
-	return
+// OriginInput : The request data of origin server.
+type OriginInput struct {
+	// The name of the origin server.
+	Name *string `json:"name,omitempty"`
+
+	// Description of the origin server.
+	Description *string `json:"description,omitempty"`
+
+	// The address of the origin server. It can be a hostname or an IP address.
+	Address *string `json:"address,omitempty"`
+
+	// Whether the origin server is enabled.
+	Enabled *bool `json:"enabled,omitempty"`
 }
 
-// UnmarshalOriginSliceAsProperty unmarshals a slice of Origin instances that are stored as a property
-// within the specified map.
-func UnmarshalOriginSliceAsProperty(m map[string]interface{}, propertyName string) (slice []Origin, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'Origin'", propertyName)
-			return
-		}
-		slice, err = UnmarshalOriginSlice(vSlice)
+// UnmarshalOriginInput unmarshals an instance of OriginInput from the specified map of raw messages.
+func UnmarshalOriginInput(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(OriginInput)
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
+	if err != nil {
+		return
 	}
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "address", &obj.Address)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }
 
@@ -2939,12 +2855,6 @@ func UnmarshalOriginSliceAsProperty(m map[string]interface{}, propertyName strin
 type Pool struct {
 	// Identifier of the load balancer pool.
 	ID *string `json:"id,omitempty"`
-
-	// the time when a load balancer pool is created.
-	CreatedOn *string `json:"created_on,omitempty"`
-
-	// the recent time when a load balancer pool is modified.
-	ModifiedOn *string `json:"modified_on,omitempty"`
 
 	// Name of the load balancer pool.
 	Name *string `json:"name,omitempty"`
@@ -2957,7 +2867,7 @@ type Pool struct {
 
 	// The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins
 	// falls below this number, the pool will be marked unhealthy and we will failover to the next available pool.
-	MinimumOrigins *int64 `json:"minimum_origins,omitempty"`
+	HealthyOriginsThreshold *int64 `json:"healthy_origins_threshold,omitempty"`
 
 	// The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy
 	// origins, provided the pool itself is healthy.
@@ -2966,100 +2876,99 @@ type Pool struct {
 	// The ID of the load balancer monitor to be associated to this pool.
 	Monitor *string `json:"monitor,omitempty"`
 
-	// The type of the notification channel.
-	NotificationType *string `json:"notification_type,omitempty"`
-
 	// The notification channel.
 	NotificationChannel *string `json:"notification_channel,omitempty"`
+
+	// Healthy state of the load balancer pool.
+	Health *string `json:"health,omitempty"`
+
+	// Health check region of VSIs.
+	HealthcheckRegion *string `json:"healthcheck_region,omitempty"`
+
+	// Health check subnet IDs of VSIs.
+	HealthcheckSubnets []string `json:"healthcheck_subnets,omitempty"`
+
+	// the time when a load balancer pool is created.
+	CreatedOn *string `json:"created_on,omitempty"`
+
+	// the recent time when a load balancer pool is modified.
+	ModifiedOn *string `json:"modified_on,omitempty"`
 }
 
-// Constants associated with the Pool.NotificationType property.
-// The type of the notification channel.
+// Constants associated with the Pool.Health property.
+// Healthy state of the load balancer pool.
 const (
-	Pool_NotificationType_Email   = "email"
-	Pool_NotificationType_Webhook = "webhook"
+	Pool_Health_Critical = "CRITICAL"
+	Pool_Health_Degraded = "DEGRADED"
+	Pool_Health_Healthy  = "HEALTHY"
 )
 
-// UnmarshalPool constructs an instance of Pool from the specified map.
-func UnmarshalPool(m map[string]interface{}) (result *Pool, err error) {
+// Constants associated with the Pool.HealthcheckRegion property.
+// Health check region of VSIs.
+const (
+	Pool_HealthcheckRegion_AuSyd   = "au-syd"
+	Pool_HealthcheckRegion_EuDu    = "eu-du"
+	Pool_HealthcheckRegion_EuGb    = "eu-gb"
+	Pool_HealthcheckRegion_JpTok   = "jp-tok"
+	Pool_HealthcheckRegion_UsEast  = "us-east"
+	Pool_HealthcheckRegion_UsSouth = "us-south"
+)
+
+// UnmarshalPool unmarshals an instance of Pool from the specified map of raw messages.
+func UnmarshalPool(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Pool)
-	obj.ID, err = core.UnmarshalString(m, "id")
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
 	if err != nil {
 		return
 	}
-	obj.CreatedOn, err = core.UnmarshalString(m, "created_on")
+	err = core.UnmarshalPrimitive(m, "name", &obj.Name)
 	if err != nil {
 		return
 	}
-	obj.ModifiedOn, err = core.UnmarshalString(m, "modified_on")
+	err = core.UnmarshalPrimitive(m, "description", &obj.Description)
 	if err != nil {
 		return
 	}
-	obj.Name, err = core.UnmarshalString(m, "name")
+	err = core.UnmarshalPrimitive(m, "enabled", &obj.Enabled)
 	if err != nil {
 		return
 	}
-	obj.Description, err = core.UnmarshalString(m, "description")
+	err = core.UnmarshalPrimitive(m, "healthy_origins_threshold", &obj.HealthyOriginsThreshold)
 	if err != nil {
 		return
 	}
-	obj.Enabled, err = core.UnmarshalBool(m, "enabled")
+	err = core.UnmarshalModel(m, "origins", &obj.Origins, UnmarshalOrigin)
 	if err != nil {
 		return
 	}
-	obj.MinimumOrigins, err = core.UnmarshalInt64(m, "minimum_origins")
+	err = core.UnmarshalPrimitive(m, "monitor", &obj.Monitor)
 	if err != nil {
 		return
 	}
-	obj.Origins, err = UnmarshalOriginSliceAsProperty(m, "origins")
+	err = core.UnmarshalPrimitive(m, "notification_channel", &obj.NotificationChannel)
 	if err != nil {
 		return
 	}
-	obj.Monitor, err = core.UnmarshalString(m, "monitor")
+	err = core.UnmarshalPrimitive(m, "health", &obj.Health)
 	if err != nil {
 		return
 	}
-	obj.NotificationType, err = core.UnmarshalString(m, "notification_type")
+	err = core.UnmarshalPrimitive(m, "healthcheck_region", &obj.HealthcheckRegion)
 	if err != nil {
 		return
 	}
-	obj.NotificationChannel, err = core.UnmarshalString(m, "notification_channel")
+	err = core.UnmarshalPrimitive(m, "healthcheck_subnets", &obj.HealthcheckSubnets)
 	if err != nil {
 		return
 	}
-	result = obj
-	return
-}
-
-// UnmarshalPoolSlice unmarshals a slice of Pool instances from the specified list of maps.
-func UnmarshalPoolSlice(s []interface{}) (slice []Pool, err error) {
-	for _, v := range s {
-		objMap, ok := v.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("slice element should be a map containing an instance of 'Pool'")
-			return
-		}
-		obj, e := UnmarshalPool(objMap)
-		if e != nil {
-			err = e
-			return
-		}
-		slice = append(slice, *obj)
+	err = core.UnmarshalPrimitive(m, "created_on", &obj.CreatedOn)
+	if err != nil {
+		return
 	}
-	return
-}
-
-// UnmarshalPoolSliceAsProperty unmarshals a slice of Pool instances that are stored as a property
-// within the specified map.
-func UnmarshalPoolSliceAsProperty(m map[string]interface{}, propertyName string) (slice []Pool, err error) {
-	v, foundIt := m[propertyName]
-	if foundIt && v != nil {
-		vSlice, ok := v.([]interface{})
-		if !ok {
-			err = fmt.Errorf("map property '%s' should be a slice of maps, each containing an instance of 'Pool'", propertyName)
-			return
-		}
-		slice, err = UnmarshalPoolSlice(vSlice)
+	err = core.UnmarshalPrimitive(m, "modified_on", &obj.ModifiedOn)
+	if err != nil {
+		return
 	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
 	return
 }

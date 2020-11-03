@@ -169,7 +169,6 @@ func Provider() terraform.ResourceProvider {
 			"ibm_certificate_manager_certificate":    dataIBMCertificateManagerCertificate(),
 			"ibm_cis":                                dataSourceIBMCISInstance(),
 			"ibm_cis_dns_records":                    dataSourceIBMCISDNSRecords(),
-			"ibm_cis_global_load_balancers":          dataSourceIBMCISGlbs(),
 			"ibm_cis_origin_pools":                   dataSourceIBMCISOriginPools(),
 			"ibm_cis_healthchecks":                   dataSourceIBMCISHealthChecks(),
 			"ibm_cis_domain":                         dataSourceIBMCISDomain(),
@@ -281,6 +280,7 @@ func Provider() terraform.ResourceProvider {
 			"ibm_dns_zones":              dataSourceIBMPrivateDNSZones(),
 			"ibm_dns_permitted_networks": dataSourceIBMPrivateDNSPermittedNetworks(),
 			"ibm_dns_resource_records":   dataSourceIBMPrivateDNSResourceRecords(),
+			"ibm_dns_glb_monitors":       dataSourceIBMPrivateDNSGLBMonitors(),
 
 			// Added for Direct Link
 
@@ -326,7 +326,6 @@ func Provider() terraform.ResourceProvider {
 			"ibm_cis_edge_functions_action":                      resourceIBMCISEdgeFunctionsAction(),
 			"ibm_cis_edge_functions_trigger":                     resourceIBMCISEdgeFunctionsTrigger(),
 			"ibm_cis_tls_settings":                               resourceIBMCISTLSSettings(),
-			"ibm_cis_routing":                                    resourceIBMCISRouting(),
 			"ibm_compute_autoscale_group":                        resourceIBMComputeAutoScaleGroup(),
 			"ibm_compute_autoscale_policy":                       resourceIBMComputeAutoScalePolicy(),
 			"ibm_compute_bare_metal":                             resourceIBMComputeBareMetal(),
@@ -456,6 +455,7 @@ func Provider() terraform.ResourceProvider {
 			"ibm_dns_zone":              resourceIBMPrivateDNSZone(),
 			"ibm_dns_permitted_network": resourceIBMPrivateDNSPermittedNetwork(),
 			"ibm_dns_resource_record":   resourceIBMPrivateDNSResourceRecord(),
+			"ibm_dns_glb_monitor":       resourceIBMPrivateDNSGLBMonitor(),
 
 			//Direct Link related resources
 			"ibm_dl_gateway":            resourceIBMDLGateway(),
@@ -477,12 +477,14 @@ func Validator() ValidatorDict {
 	initOnce.Do(func() {
 		globalValidatorDict = ValidatorDict{
 			ResourceValidatorDictionary: map[string]*ResourceValidator{
+				"ibm_is_vpc":                           resourceIBMISVPCValidator(),
+				"ibm_is_ike_policy":                    resourceIBMISIKEValidator(),
+				"ibm_is_network_acl":                   resourceIBMISNetworkACLValidator(),
 				"ibm_iam_custom_role":                  resourceIBMIAMCustomRoleValidator(),
 				"ibm_cis_healthcheck":                  resourceIBMCISHealthCheckValidator(),
 				"ibm_cis_rate_limit":                   resourceIBMCISRateLimitValidator(),
 				"ibm_cis_domain_settings":              resourceIBMCISDomainSettingValidator(),
 				"ibm_cis_tls_settings":                 resourceIBMCISTLSSettingsValidator(),
-				"ibm_cis_routing":                      resourceIBMCISRoutingValidator(),
 				"ibm_tg_gateway":                       resourceIBMTGValidator(),
 				"ibm_tg_connection":                    resourceIBMTransitGatewayConnectionValidator(),
 				"ibm_dl_virtual_connection":            resourceIBMdlGatewayVCValidator(),
@@ -496,28 +498,7 @@ func Validator() ValidatorDict {
 				"ibm_is_instance_group":                resourceIBMISInstanceGroupValidator(),
 				"ibm_is_instance_group_manager":        resourceIBMISInstanceGroupManagerValidator(),
 				"ibm_is_instance_group_manager_policy": resourceIBMISInstanceGroupManagerPolicyValidator(),
-				"ibm_is_floating_ip":                   resourceIBMISFloatingIPValidator(),
-				"ibm_is_ike_policy":                    resourceIBMISIKEValidator(),
-				"ibm_is_image":                         resourceIBMISImageValidator(),
-				"ibm_is_instance":                      resourceIBMISInstanceValidator(),
-				"ibm_is_ipsec_policy":                  resourceIBMISIPSECValidator(),
-				"ibm_is_lb_listener_policy_rule":       resourceIBMISLBListenerPolicyRuleValidator(),
-				"ibm_is_lb_listener_policy":            resourceIBMISLBListenerPolicyValidator(),
-				"ibm_is_lb_listener":                   resourceIBMISLBListenerValidator(),
-				"ibm_is_lb_pool":                       resourceIBMISLBPoolValidator(),
 				"ibm_is_lb":                            resourceIBMISLBValidator(),
-				"ibm_is_network_acl":                   resourceIBMISNetworkACLValidator(),
-				"ibm_is_public_gateway":                resourceIBMISPublicGatewayValidator(),
-				"ibm_is_security_group_rule":           resourceIBMISSecurityGroupRuleValidator(),
-				"ibm_is_security_group":                resourceIBMISSecurityGroupValidator(),
-				"ibm_is_ssh_key":                       resourceIBMISSHKeyValidator(),
-				"ibm_is_subnet":                        resourceIBMISSubnetValidator(),
-				"ibm_is_volume":                        resourceIBMISVolumeValidator(),
-				"ibm_is_address_prefix":                resourceIBMISAddressPrefixValidator(),
-				"ibm_is_route":                         resourceIBMISRouteValidator(),
-				"ibm_is_vpc":                           resourceIBMISVPCValidator(),
-				"ibm_is_vpn_gateway_connection":        resourceIBMISVPNGatewayConnectionValidator(),
-				"ibm_is_vpn_gateway":                   resourceIBMISVPNGatewayValidator(),
 			},
 			DataSourceValidatorDictionary: map[string]*ResourceValidator{
 				"ibm_is_subnet":          dataSourceIBMISSubnetValidator(),
