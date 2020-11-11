@@ -121,3 +121,27 @@ data "ibm_dns_resource_records" "test-res-rec" {
   instance_id = ibm_resource_instance.test-pdns-instance.guid
   zone_id = ibm_dns_resource_record.test-pdns-resource-record-a.zone_id
 }
+
+resource "ibm_dns_glb_monitor" "test-pdns-monitor" {
+		depends_on = [ibm_dns_zone.test-pdns-zone]
+		name = "test-pdns-glb-monitor"
+		instance_id = ibm_resource_instance.test-pdns-instance.guid
+		description = "test monitor description"
+		interval=63
+		retries=3
+		timeout=8
+		port=8080
+		type="HTTP"
+		expected_codes= "200"
+		path="/health"
+		method="GET"
+		expected_body="alive"
+		headers{
+			name="headerName"
+			value=["example","abc"]
+		}	
+  }
+
+  data "ibm_dns_glb_monitors" "test1" {
+		instance_id = ibm_resource_instance.test-pdns-instance.guid		
+	}
