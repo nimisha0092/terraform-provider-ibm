@@ -11,28 +11,28 @@ import (
 )
 
 const (
-	pdnsGlbLoadBalancerName             = "name"
-	pdnsGlbLoadBalancerID               = "loadbalancer_id"
-	pdnsGlbLoadBalancerDescription      = "description"
-	pdnsGlbLoadBalancerEnabled          = "enabled"
-	pdnsGlbLoadBalancerTTL              = "ttl"
-	pdnsGlbLoadBalancerHealth           = "health"
-	pdnsGlbLoadBalancerFallbackPool     = "fallback_pool"
-	pdnsGlbLoadBalancerDefaultPool      = "default_pools"
-	pdnsGlbLoadBalancerAZPools          = "az_pools"
-	pdnsGlbLoadBalancerAvailabilityZone = "availability_zone"
-	pdnsGlbLoadBalancerPools            = "pools"
-	pdnsGlbLoadBalancerCreatedOn        = "created_on"
-	pdnsGlbLoadBalancerModifiedOn       = "modified_on"
+	pdnsGLBName             = "name"
+	pdnsGLBID               = "glb_id"
+	pdnsGLBDescription      = "description"
+	pdnsGLBEnabled          = "enabled"
+	pdnsGLBTTL              = "ttl"
+	pdnsGLBHealth           = "health"
+	pdnsGLBFallbackPool     = "fallback_pool"
+	pdnsGLBDefaultPool      = "default_pools"
+	pdnsGLBAZPools          = "az_pools"
+	pdnsGLBAvailabilityZone = "availability_zone"
+	pdnsGLBAZPoolsPools     = "pools"
+	pdnsGLBCreatedOn        = "created_on"
+	pdnsGLBModifiedOn       = "modified_on"
 )
 
-func resourceIBMPrivateDNSGLBLoadbalancer() *schema.Resource {
+func resourceIBMPrivateDNSGLB() *schema.Resource {
 	return &schema.Resource{
-		Create:   resourceIBMPrivateDNSGLBLoadbalancerCreate,
-		Read:     resourceIBMPrivateDNSGLBLoadbalancerRead,
-		Update:   resourceIBMPrivateDNSGLBLoadbalancerUpdate,
-		Delete:   resourceIBMPrivateDNSGLBLoadbalancerDelete,
-		Exists:   resourceIBMPrivateDNSGLBLoadbalancerExists,
+		Create:   resourceIBMPrivateDNSGLBCreate,
+		Read:     resourceIBMPrivateDNSGLBRead,
+		Update:   resourceIBMPrivateDNSGLBUpdate,
+		Delete:   resourceIBMPrivateDNSGLBDelete,
+		Exists:   resourceIBMPrivateDNSGLBExists,
 		Importer: &schema.ResourceImporter{},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -42,7 +42,7 @@ func resourceIBMPrivateDNSGLBLoadbalancer() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			pdnsGlbLoadBalancerID: {
+			pdnsGLBID: {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Load balancer Id",
@@ -62,43 +62,43 @@ func resourceIBMPrivateDNSGLBLoadbalancer() *schema.Resource {
 				Description: "Zone Id",
 			},
 
-			pdnsGlbLoadBalancerName: {
+			pdnsGLBName: {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Name of the load balancer",
 			},
 
-			pdnsGlbLoadBalancerDescription: {
+			pdnsGLBDescription: {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Descriptive text of the load balancer",
 			},
 
-			pdnsGlbLoadBalancerEnabled: {
+			pdnsGLBEnabled: {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Whether the load balancer is enabled",
 			},
 
-			pdnsGlbLoadBalancerTTL: {
+			pdnsGLBTTL: {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "Time to live in second",
 			},
 
-			pdnsGlbLoadBalancerHealth: {
+			pdnsGLBHealth: {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Load balancer Id",
 			},
 
-			pdnsGlbLoadBalancerFallbackPool: {
+			pdnsGLBFallbackPool: {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The pool ID to use when all other pools are detected as unhealthy",
 			},
 
-			pdnsGlbLoadBalancerDefaultPool: {
+			pdnsGLBDefaultPool: {
 				Type:        schema.TypeList,
 				Required:    true,
 				Description: "A list of pool IDs ordered by their failover priority",
@@ -107,19 +107,19 @@ func resourceIBMPrivateDNSGLBLoadbalancer() *schema.Resource {
 				},
 			},
 
-			pdnsGlbLoadBalancerAZPools: {
+			pdnsGLBAZPools: {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Map availability zones to pool ID's.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						pdnsGlbLoadBalancerAvailabilityZone: {
+						pdnsGLBAvailabilityZone: {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: "Availability zone.",
 						},
 
-						pdnsGlbLoadBalancerPools: {
+						pdnsGLBAZPoolsPools: {
 							Type:        schema.TypeList,
 							Required:    true,
 							Description: "List of load balancer pools",
@@ -131,13 +131,13 @@ func resourceIBMPrivateDNSGLBLoadbalancer() *schema.Resource {
 				},
 			},
 
-			pdnsGlbLoadBalancerCreatedOn: {
+			pdnsGLBCreatedOn: {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "GLB Load Balancer creation date",
 			},
 
-			pdnsGlbLoadBalancerModifiedOn: {
+			pdnsGLBModifiedOn: {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "GLB Load Balancer Modification date",
@@ -146,7 +146,7 @@ func resourceIBMPrivateDNSGLBLoadbalancer() *schema.Resource {
 	}
 }
 
-func resourceIBMPrivateDNSGLBLoadbalancerCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceIBMPrivateDNSGLBCreate(d *schema.ResourceData, meta interface{}) error {
 	sess, err := meta.(ClientSession).PrivateDNSClientSession()
 	if err != nil {
 		return err
@@ -155,25 +155,25 @@ func resourceIBMPrivateDNSGLBLoadbalancerCreate(d *schema.ResourceData, meta int
 	zoneID := d.Get(pdnsZoneID).(string)
 	createlbOptions := sess.NewCreateLoadBalancerOptions(instanceID, zoneID)
 
-	lbname := d.Get(pdnsGlbLoadBalancerName).(string)
+	lbname := d.Get(pdnsGLBName).(string)
 	createlbOptions.SetName(lbname)
 
-	if description, ok := d.GetOk(pdnsGlbLoadBalancerDescription); ok {
+	if description, ok := d.GetOk(pdnsGLBDescription); ok {
 		createlbOptions.SetDescription(description.(string))
 	}
-	if enable, ok := d.GetOkExists(pdnsGlbLoadBalancerEnabled); ok {
+	if enable, ok := d.GetOkExists(pdnsGLBEnabled); ok {
 		createlbOptions.SetEnabled(enable.(bool))
 	}
-	if ttl, ok := d.GetOk(pdnsGlbLoadBalancerTTL); ok {
+	if ttl, ok := d.GetOk(pdnsGLBTTL); ok {
 		createlbOptions.SetTTL(int64(ttl.(int)))
 	}
-	if flbpool, ok := d.GetOk(pdnsGlbLoadBalancerFallbackPool); ok {
+	if flbpool, ok := d.GetOk(pdnsGLBFallbackPool); ok {
 		createlbOptions.SetFallbackPool(flbpool.(string))
 	}
 
-	createlbOptions.SetDefaultPools(expandStringList(d.Get(pdnsGlbLoadBalancerDefaultPool).([]interface{})))
+	createlbOptions.SetDefaultPools(expandStringList(d.Get(pdnsGLBDefaultPool).([]interface{})))
 
-	if AZpools, ok := d.GetOk(pdnsGlbLoadBalancerAZPools); ok {
+	if AZpools, ok := d.GetOk(pdnsGLBAZPools); ok {
 		expandedAzpools, err := expandGLBAZPools(AZpools)
 		if err != nil {
 			return err
@@ -188,7 +188,7 @@ func resourceIBMPrivateDNSGLBLoadbalancerCreate(d *schema.ResourceData, meta int
 	}
 
 	d.SetId(fmt.Sprintf("%s/%s/%s", instanceID, zoneID, *result.ID))
-	return resourceIBMPrivateDNSGLBLoadbalancerRead(d, meta)
+	return resourceIBMPrivateDNSGLBRead(d, meta)
 }
 
 func expandGLBAZPools(azpool interface{}) ([]dnssvcsv1.LoadBalancerAzPoolsItem, error) {
@@ -196,8 +196,8 @@ func expandGLBAZPools(azpool interface{}) ([]dnssvcsv1.LoadBalancerAzPoolsItem, 
 	expandAZpools := make([]dnssvcsv1.LoadBalancerAzPoolsItem, 0)
 	for _, v := range azpools {
 		locationConfig := v.(map[string]interface{})
-		avzone := locationConfig[pdnsGlbLoadBalancerAvailabilityZone].(string)
-		pools := expandStringList(locationConfig[pdnsGlbLoadBalancerPools].([]interface{}))
+		avzone := locationConfig[pdnsGLBAvailabilityZone].(string)
+		pools := expandStringList(locationConfig[pdnsGLBPools].([]interface{}))
 		aZItem := dnssvcsv1.LoadBalancerAzPoolsItem{
 			AvailabilityZone: &avzone,
 			Pools:            pools,
@@ -207,7 +207,7 @@ func expandGLBAZPools(azpool interface{}) ([]dnssvcsv1.LoadBalancerAzPoolsItem, 
 	return expandAZpools, nil
 }
 
-func resourceIBMPrivateDNSGLBLoadbalancerRead(d *schema.ResourceData, meta interface{}) error {
+func resourceIBMPrivateDNSGLBRead(d *schema.ResourceData, meta interface{}) error {
 	sess, err := meta.(ClientSession).PrivateDNSClientSession()
 	if err != nil {
 		return err
@@ -221,20 +221,17 @@ func resourceIBMPrivateDNSGLBLoadbalancerRead(d *schema.ResourceData, meta inter
 	}
 
 	response := *presponse
-	d.Set(pdnsGlbLoadBalancerName, response.Name)
-	d.Set(pdnsGlbLoadBalancerID, response.ID)
-	d.Set(pdnsGlbLoadBalancerDescription, response.Description)
-	d.Set(pdnsGlbLoadBalancerEnabled, response.Enabled)
-	d.Set(pdnsGlbLoadBalancerTTL, response.TTL)
-	d.Set(pdnsGlbLoadBalancerHealth, response.Health)
-	d.Set(pdnsGlbLoadBalancerFallbackPool, response.FallbackPool)
-	d.Set(pdnsGlbLoadBalancerDefaultPool, response.DefaultPools)
-	d.Set(pdnsGlbLoadBalancerCreatedOn, response.CreatedOn)
-	d.Set(pdnsGlbLoadBalancerModifiedOn, response.ModifiedOn)
-	d.Set(pdnsGlbLoadBalancerAZPools, flattenDataSourceLoadBalancerAZpool(response.AzPools))
-
-	log.Printf("global load balancer pool created successfully : %s", idset[1])
-
+	d.Set(pdnsGLBName, response.Name)
+	d.Set(pdnsGLBID, response.ID)
+	d.Set(pdnsGLBDescription, response.Description)
+	d.Set(pdnsGLBEnabled, response.Enabled)
+	d.Set(pdnsGLBTTL, response.TTL)
+	d.Set(pdnsGLBHealth, response.Health)
+	d.Set(pdnsGLBFallbackPool, response.FallbackPool)
+	d.Set(pdnsGLBDefaultPool, response.DefaultPools)
+	d.Set(pdnsGLBCreatedOn, response.CreatedOn)
+	d.Set(pdnsGLBModifiedOn, response.ModifiedOn)
+	d.Set(pdnsGLBAZPools, flattenDataSourceLoadBalancerAZpool(response.AzPools))
 	return nil
 }
 
@@ -242,15 +239,15 @@ func flattenDataSourceLoadBalancerAZpool(azpool []dnssvcsv1.LoadBalancerAzPoolsI
 	flattened := make([]interface{}, 0)
 	for _, v := range azpool {
 		cfg := map[string]interface{}{
-			pdnsGlbLoadBalancerAvailabilityZone: v.AvailabilityZone,
-			pdnsGlbLoadBalancerPools:            flattenStringList(v.Pools),
+			pdnsGLBAvailabilityZone: v.AvailabilityZone,
+			pdnsGLBPools:            flattenStringList(v.Pools),
 		}
 		flattened = append(flattened, cfg)
 	}
 	return flattened
 }
 
-func resourceIBMPrivateDNSGLBLoadbalancerUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceIBMPrivateDNSGLBUpdate(d *schema.ResourceData, meta interface{}) error {
 	sess, err := meta.(ClientSession).PrivateDNSClientSession()
 	if err != nil {
 		return err
@@ -260,35 +257,35 @@ func resourceIBMPrivateDNSGLBLoadbalancerUpdate(d *schema.ResourceData, meta int
 
 	updatelbOptions := sess.NewUpdateLoadBalancerOptions(idset[0], idset[1], idset[2])
 
-	if d.HasChange(pdnsGlbLoadBalancerName) ||
-		d.HasChange(pdnsGlbLoadBalancerDescription) ||
-		d.HasChange(pdnsGlbLoadBalancerEnabled) ||
-		d.HasChange(pdnsGlbLoadBalancerTTL) ||
-		d.HasChange(pdnsGlbLoadBalancerFallbackPool) ||
-		d.HasChange(pdnsGlbLoadBalancerDefaultPool) ||
-		d.HasChange(pdnsGlbLoadBalancerAZPools) {
+	if d.HasChange(pdnsGLBName) ||
+		d.HasChange(pdnsGLBDescription) ||
+		d.HasChange(pdnsGLBEnabled) ||
+		d.HasChange(pdnsGLBTTL) ||
+		d.HasChange(pdnsGLBFallbackPool) ||
+		d.HasChange(pdnsGLBDefaultPool) ||
+		d.HasChange(pdnsGLBAZPools) {
 
-		if name, ok := d.GetOk(pdnsGlbLoadBalancerName); ok {
+		if name, ok := d.GetOk(pdnsGLBName); ok {
 			updatelbOptions.SetName(name.(string))
 		}
-		if description, ok := d.GetOk(pdnsGlbLoadBalancerDescription); ok {
+		if description, ok := d.GetOk(pdnsGLBDescription); ok {
 			updatelbOptions.SetDescription(description.(string))
 		}
-		if enable, ok := d.GetOkExists(pdnsGlbLoadBalancerEnabled); ok {
+		if enable, ok := d.GetOkExists(pdnsGLBEnabled); ok {
 			updatelbOptions.SetEnabled(enable.(bool))
 		}
-		if ttl, ok := d.GetOk(pdnsGlbLoadBalancerTTL); ok {
+		if ttl, ok := d.GetOk(pdnsGLBTTL); ok {
 			updatelbOptions.SetTTL(int64(ttl.(int)))
 		}
-		if flbpool, ok := d.GetOk(pdnsGlbLoadBalancerFallbackPool); ok {
+		if flbpool, ok := d.GetOk(pdnsGLBFallbackPool); ok {
 			updatelbOptions.SetFallbackPool(flbpool.(string))
 		}
 
-		if _, ok := d.GetOk(pdnsGlbLoadBalancerDefaultPool); ok {
-			updatelbOptions.SetDefaultPools(expandStringList(d.Get(pdnsGlbLoadBalancerDefaultPool).([]interface{})))
+		if _, ok := d.GetOk(pdnsGLBDefaultPool); ok {
+			updatelbOptions.SetDefaultPools(expandStringList(d.Get(pdnsGLBDefaultPool).([]interface{})))
 		}
 
-		if AZpools, ok := d.GetOk(pdnsGlbLoadBalancerAZPools); ok {
+		if AZpools, ok := d.GetOk(pdnsGLBAZPools); ok {
 			expandedAzpools, err := expandGLBAZPools(AZpools)
 			if err != nil {
 				return err
@@ -303,42 +300,38 @@ func resourceIBMPrivateDNSGLBLoadbalancerUpdate(d *schema.ResourceData, meta int
 		log.Printf("Load Balancer update succesful : %s", *result.ID)
 	}
 
-	return resourceIBMPrivateDNSGLBLoadbalancerRead(d, meta)
+	return resourceIBMPrivateDNSGLBRead(d, meta)
 }
 
-func resourceIBMPrivateDNSGLBLoadbalancerDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceIBMPrivateDNSGLBDelete(d *schema.ResourceData, meta interface{}) error {
 	sess, err := meta.(ClientSession).PrivateDNSClientSession()
 	if err != nil {
 		return err
 	}
 
 	idset := strings.Split(d.Id(), "/")
-
-	DeletelbOptions := sess.NewDeleteLoadBalancerOptions(idset[0], idset[1], idset[2])
-	response, err := sess.DeleteLoadBalancer(DeletelbOptions)
-
+	deletelbOptions := sess.NewDeleteLoadBalancerOptions(idset[0], idset[1], idset[2])
+	response, err := sess.DeleteLoadBalancer(deletelbOptions)
 	if err != nil {
 		return fmt.Errorf("Error deleting pdns GLB :%s\n%s", err, response)
 	}
-
-	d.SetId("")
 	return nil
 }
 
-func resourceIBMPrivateDNSGLBLoadbalancerExists(d *schema.ResourceData, meta interface{}) (bool, error) {
+func resourceIBMPrivateDNSGLBExists(d *schema.ResourceData, meta interface{}) (bool, error) {
 	sess, err := meta.(ClientSession).PrivateDNSClientSession()
 	if err != nil {
 		return false, err
 	}
-
 	idset := strings.Split(d.Id(), "/")
-
-	getlbOptions := sess.NewGetLoadBalancerOptions(idset[0], idset[1], idset[1])
-	response, detail, err := sess.GetLoadBalancer(getlbOptions)
+	getlbOptions := sess.NewGetLoadBalancerOptions(idset[0], idset[1], idset[2])
+	_, detail, err := sess.GetLoadBalancer(getlbOptions)
 	if err != nil {
-		if response != nil && detail != nil && detail.StatusCode == 404 {
+		if detail != nil && detail.StatusCode == 404 {
+			log.Printf("Get GLB failed with status code 404: %v", detail)
 			return false, nil
 		}
+		log.Printf("Get GLB failed: %v", detail)
 		return false, err
 	}
 	return true, nil

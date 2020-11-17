@@ -16,28 +16,28 @@ func TestAccIBMPrivateDNSGlbLoadBalancer_Basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckIBMPrivateDNSGlbMonitorDestroy,
+		CheckDestroy: testAccCheckIBMPrivateDNSGlbDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccCheckIBMPrivateDNSGlbLoadBalancerBasic(name),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckIBMPrivateDNSGlbLoadBalancerExists("ibm_dns_glb_load_balancer.test-pdns-lb", resultprivatedns),
+					testAccCheckIBMPrivateDNSGlbLoadBalancerExists("ibm_dns_glb.test-pdns-lb", resultprivatedns),
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
-					resource.TestCheckResourceAttr("ibm_dns_glb_load_balancer.test-pdns-lb", "name", "Test-load-balancer"),
-					resource.TestCheckResourceAttr("ibm_dns_glb_load_balancer.test-pdns-lb", "description", "new  lb"),
-					resource.TestCheckResourceAttr("ibm_dns_glb_load_balancer.test-pdns-lb", "healthy_origins_threshold", "1"),
+					resource.TestCheckResourceAttr("ibm_dns_glb.test-pdns-lb", "name", "Test-load-balancer"),
+					resource.TestCheckResourceAttr("ibm_dns_glb.test-pdns-lb", "description", "new  lb"),
+					resource.TestCheckResourceAttr("ibm_dns_glb.test-pdns-lb", "healthy_origins_threshold", "1"),
 				),
 			},
 			{
 				Config: testAccCheckIBMPrivateDNSGlbUpdateLoadBalancerBasic(name),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckIBMPrivateDNSGlbLoadBalancerExists("ibm_dns_glb_load_balancer.test-pdns-monitor", resultprivatedns),
+					testAccCheckIBMPrivateDNSGlbLoadBalancerExists("ibm_dns_glb.test-pdns-monitor", resultprivatedns),
 					// dont check that specified values are set, this will be evident by lack of plan diff
 					// some values will get empty values
-					resource.TestCheckResourceAttr("ibm_dns_glb_load_balancer.test-pdns-lb", "name", "test-pdns-glb-monitor-update"),
-					resource.TestCheckResourceAttr("ibm_dns_glb_load_balancer.test-pdns-lb", "description", "UpdatedMonitordescription"),
-					resource.TestCheckResourceAttr("ibm_dns_glb_load_balancer.test-pdns-lb", "healthy_origins_threshold", "1"),
+					resource.TestCheckResourceAttr("ibm_dns_glb.test-pdns-lb", "name", "test-pdns-glb-monitor-update"),
+					resource.TestCheckResourceAttr("ibm_dns_glb.test-pdns-lb", "description", "UpdatedMonitordescription"),
+					resource.TestCheckResourceAttr("ibm_dns_glb.test-pdns-lb", "healthy_origins_threshold", "1"),
 				),
 			},
 		},
@@ -56,11 +56,11 @@ func TestAccIBMPrivateDNSGlboadBalancerImport(t *testing.T) {
 			{
 				Config: testAccCheckIBMPrivateDNSGlbLoadBalancerBasic(name),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckIBMPrivateDNSGlbLoadBalancerExists("ibm_dns_glb_load_balancer.test-pdns-lb", resultprivatedns),
+					testAccCheckIBMPrivateDNSGlbLoadBalancerExists("ibm_dns_glb.test-pdns-lb", resultprivatedns),
 				),
 			},
 			{
-				ResourceName:      "ibm_dns_glb_load_balancer.test-pdns-lb",
+				ResourceName:      "ibm_dns_glb.test-pdns-lb",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
@@ -111,8 +111,8 @@ func testAccCheckIBMPrivateDNSGlbLoadBalancerBasic(name string) string {
 				enabled = true
 				description="origin pool"
 		}
-    }	
-	resource "ibm_dns_glb_load_balancer" "test-pdns-lb" {
+    }
+	resource "ibm_dns_glb" "test-pdns-lb" {
 		depends_on = [ibm_dns_zone.test-pdns-zone]
 		name = "Test-load-balancer"
 		instance_id = ibm_resource_instance.test-pdns-instance.guid
@@ -125,7 +125,7 @@ func testAccCheckIBMPrivateDNSGlbLoadBalancerBasic(name string) string {
 		  availability_zone="WEU"
 		  pools = [ibm_dns_glb_pool.test-pdns-pool.id]
 		}
-    }             
+    }
 	  `, name)
 
 }
@@ -172,8 +172,8 @@ func testAccCheckIBMPrivateDNSGlbUpdateLoadBalancerBasic(name string) string {
 				enabled = true
 				description="origin pool"
 		}
-    }	
-	resource "ibm_dns_glb_load_balancer" "test-pdns-lb" {
+    }
+	resource "ibm_dns_glb" "test-pdns-lb" {
 		depends_on = [ibm_dns_zone.test-pdns-zone]
 		name = "Update load balancer"
 		instance_id = ibm_resource_instance.test-pdns-instance.guid
@@ -186,14 +186,14 @@ func testAccCheckIBMPrivateDNSGlbUpdateLoadBalancerBasic(name string) string {
 		  availability_zone="WEU"
 		  pools = [ibm_dns_glb_pool.test-pdns-pool.id]
 		}
-    }             
+    }
 	  `, name)
 
 }
 
-func testAccCheckIBMPrivateDNSGlbMonitorDestroy(s *terraform.State) error {
+func testAccCheckIBMPrivateDNSGlbDestroy(s *terraform.State) error {
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "ibm_dns_glb_load_balancer" {
+		if rs.Type != "ibm_dns_glb" {
 			continue
 		}
 		pdnsClient, err := testAccProvider.Meta().(ClientSession).PrivateDNSClientSession()
@@ -205,7 +205,7 @@ func testAccCheckIBMPrivateDNSGlbMonitorDestroy(s *terraform.State) error {
 		partslist := strings.Split(parts, "/")
 
 		getLbOptions := pdnsClient.NewGetLoadBalancerOptions(partslist[0], partslist[1], partslist[2])
-		r, res, err := pdnsClient.GetLoadBalancer(getLbOptions)
+		_, res, err := pdnsClient.GetLoadBalancer(getLbOptions)
 
 		if err != nil &&
 			res.StatusCode != 403 &&
