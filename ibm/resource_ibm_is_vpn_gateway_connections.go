@@ -29,6 +29,7 @@ const (
 	isVPNGatewayConnectionDeleted                   = "done"
 	isVPNGatewayConnectionProvisioning              = "provisioning"
 	isVPNGatewayConnectionProvisioningDone          = "done"
+	isVPNGatewayConnectionTunnels                   = "tunnels"
 )
 
 func resourceIBMISVPNGatewayConnection() *schema.Resource {
@@ -141,6 +142,27 @@ func resourceIBMISVPNGatewayConnection() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "The crn of the VPN Gateway resource",
+			},
+
+			isVPNGatewayConnectionTunnels: {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "The VPN tunnel configuration for this VPN gateway connection (in static route mode)",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"address": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The IP address of the VPN gateway member in which the tunnel resides",
+						},
+
+						"status": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The status of the VPN Tunnel",
+						},
+					},
+				},
 			},
 		},
 	}
@@ -455,6 +477,18 @@ func vpngwconGet(d *schema.ResourceData, meta interface{}, gID, gConnID string) 
 	}
 	if vpnGatewayConnection.IpsecPolicy != nil {
 		d.Set(isVPNGatewayConnectionIPSECPolicy, *vpnGatewayConnection.IpsecPolicy.ID)
+	}
+	if vpnGatewayConnection.Tunnels != nil {
+		vpcTunnelsList := make([]map[string]interface{}, 0)
+		for _, vpcTunnel := range vpnGatewayConnection.Tunnels {
+			currentTunnel := map[string]interface{}{}
+			if vpcTunnel.PublicIP != nil {
+				currentTunnel["address"] = *vpcTunnel.PublicIP.Address
+				currentTunnel["status"] = *vpcTunnel.Status
+				vpcTunnelsList = append(vpcTunnelsList, currentTunnel)
+			}
+		}
+		d.Set(isVPNGatewayConnectionTunnels, vpcTunnelsList)
 	}
 	d.Set(isVPNGatewayConnectionDeadPeerDetectionAction, *vpnGatewayConnection.DeadPeerDetection.Action)
 	d.Set(isVPNGatewayConnectionDeadPeerDetectionInterval, *vpnGatewayConnection.DeadPeerDetection.Interval)
